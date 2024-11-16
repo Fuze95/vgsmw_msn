@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'database/database_handler.dart';
+import 'providers/label_provider.dart';
 import 'providers/note_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/loading_provider.dart';
@@ -16,6 +17,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NoteProvider(databaseHandler)),
+        ChangeNotifierProvider(create: (_) => LabelProvider(databaseHandler)),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LoadingProvider()),
       ],
