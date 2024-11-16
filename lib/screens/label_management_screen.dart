@@ -36,6 +36,7 @@ class LabelManagementScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _addLabel(context),
+        backgroundColor: Colors.yellow[700],
         child: const Icon(Icons.add),
       ),
     );
