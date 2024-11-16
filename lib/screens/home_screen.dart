@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/note_provider.dart';
-import '../providers/label_provider.dart';
 import '../widgets/note_card.dart';
 import 'note_editor_screen.dart';
 import 'settings_screen.dart';
 import 'label_management_screen.dart';
-import '../models/note.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _showArchived = false;
+  String? _selectedLabel;
 
   @override
   Widget build(BuildContext context) {
