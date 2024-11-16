@@ -46,6 +46,10 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Calculate responsive logo size
+    final screenWidth = MediaQuery.of(context).size.width;
+    final logoSize = screenWidth * 0.35; // 35% of screen width
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -64,10 +68,11 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.note_alt_outlined,
-                  size: 100,
-                  color: Theme.of(context).colorScheme.onPrimary,
+                Image.asset(
+                  'assets/images/msn_logo.png',
+                  width: logoSize,
+                  height: logoSize,
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(height: AppConstants.defaultPadding),
                 Text(
@@ -75,6 +80,9 @@ class _SplashScreenState extends State<SplashScreen>
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
+                    fontFamily: 'Pacifico',
+                    fontSize: 36,
+                    letterSpacing: 1.2,
                   ),
                 ),
               ],
