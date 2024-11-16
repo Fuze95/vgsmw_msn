@@ -50,11 +50,11 @@ class SettingsScreen extends StatelessWidget {
                       context: context,
                       applicationName: 'MySimpleNote',
                       applicationVersion: '1.0.0',
-                      applicationLegalese: '©2024 MySimpleNote',
+                      applicationLegalese: '©2024 V.G.S.M. Wijerathna (K2421736)',
                       children: [
                         const SizedBox(height: 20),
                         const Text(
-                          'A simple note-taking app with features like categories, '
+                          'A simple note-taking app with features like labels, '
                               'image attachments, and dark mode support.',
                         ),
                       ],
@@ -71,21 +71,6 @@ class SettingsScreen extends StatelessWidget {
           Card(
             child: Column(
               children: [
-                ListTile(
-                  title: const Text('Clean Up Images'),
-                  subtitle: const Text('Remove unused image files'),
-                  trailing: const Icon(Icons.cleaning_services),
-                  onTap: () async {
-                    // Implement cleanup functionality
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Cleaning up unused images...'),
-                      ),
-                    );
-                    // Add your cleanup logic here
-                  },
-                ),
-                const Divider(),
                 ListTile(
                   title: const Text('Export Data'),
                   subtitle: const Text('Backup your notes'),
