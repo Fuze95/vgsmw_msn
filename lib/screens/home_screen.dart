@@ -51,22 +51,27 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
+                color: Colors.blue,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.note_alt_outlined,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                  SizedBox(
+                    height: 64,
+                    width: 64,
+                    child: Image.asset(
+                      'assets/images/msn_logo.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'MySimpleNote',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: Colors.white,
                       fontSize: 24,
+                      fontFamily: 'Pacifico', // Added Pacifico font
+                      letterSpacing: 1.2, // Optional: for consistent spacing
                     ),
                   ),
                 ],
@@ -76,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.note),
               title: const Text('Active Notes'),
               selected: !_showArchived,
+                selectedColor: Colors.yellow[700],
               onTap: () {
                 setState(() {
                   _showArchived = false;
@@ -87,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.archive),
               title: const Text('Archived Notes'),
               selected: _showArchived,
+              selectedColor: Colors.yellow[700],
               onTap: () {
                 setState(() {
                   _showArchived = true;
@@ -97,6 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: const Icon(Icons.label),
               title: const Text('Manage Labels'),
+              selectedColor: Colors.yellow[700],
               onTap: () {
                 Navigator.pop(context); // Close drawer
                 Navigator.push(
@@ -167,13 +175,44 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
                 onDelete: () async {
-                  await noteProvider.deleteNote(notes[index].id!);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Note deleted'),
-                      ),
-                    );
+                  // Show confirmation dialog
+                  final bool? confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Delete Note'),
+                        content: const Text('Are you sure you want to delete this note? This action cannot be undone.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(false); // Don't delete
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(true); // Confirm delete
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red, // Make the delete button red
+                            ),
+                            child: const Text('Delete'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  // If user confirmed deletion
+                  if (confirm == true) {
+                    await noteProvider.deleteNote(notes[index].id!);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Note deleted'),
+                        ),
+                      );
+                    }
                   }
                 },
               );
@@ -190,6 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
+          backgroundColor: Colors.yellow[700],
         child: const Icon(Icons.add),
       ) : null,
     );
@@ -302,15 +342,46 @@ class NoteSearchDelegate extends SearchDelegate {
                 );
               },
               onDelete: () async {
-                await Provider.of<NoteProvider>(context, listen: false)
-                    .deleteNote(filteredNotes[index].id!);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Note deleted'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
+                // Show confirmation dialog
+                final bool? confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Delete Note'),
+                      content: const Text('Are you sure you want to delete this note? This action cannot be undone.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.red,
+                          ),
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                // If user confirmed deletion
+                if (confirm == true) {
+                  await Provider.of<NoteProvider>(context, listen: false)
+                      .deleteNote(filteredNotes[index].id!);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Note deleted'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
                 }
               },
             );
