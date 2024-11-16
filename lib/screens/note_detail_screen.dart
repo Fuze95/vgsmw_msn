@@ -55,25 +55,6 @@ class NoteDetailScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: AppConstants.smallPadding),
-            if (note.categories.isNotEmpty) ...[
-              Wrap(
-                spacing: AppConstants.smallPadding,
-                children: note.categories.map((category) {
-                  return Chip(
-                    label: Text(category),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: AppConstants.defaultPadding),
-            ],
-            Text(
-              'Last modified: ${_formatDate(note.modifiedAt)}',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: AppConstants.smallFontSize,
-              ),
-            ),
             const SizedBox(height: AppConstants.defaultPadding),
             Text(
               note.content,
