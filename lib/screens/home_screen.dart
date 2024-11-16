@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/note_provider.dart';
 import '../widgets/note_card.dart';
 import 'note_editor_screen.dart';
+import '../screens/settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,7 +17,6 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // Implement search functionality
               showSearch(
                 context: context,
                 delegate: NoteSearchDelegate(),
@@ -26,7 +26,12 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              // Implement settings
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
             },
           ),
         ],
