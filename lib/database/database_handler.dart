@@ -3,6 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/note.dart';
+import '../models/label.dart';
 
 class DatabaseHandler {
   static final DatabaseHandler _instance = DatabaseHandler._internal();
@@ -25,8 +26,9 @@ class DatabaseHandler {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // Increased version number for the new labels table
       onCreate: (Database db, int version) async {
+        // Create notes table
         await db.execute('''
           CREATE TABLE notes(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,13 +43,37 @@ class DatabaseHandler {
           )
         ''');
 
+        // Create labels table
+        await db.execute('''
+          CREATE TABLE labels(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            color TEXT
+          )
+        ''');
+
         // Create indices for better query performance
         await db.execute('CREATE INDEX idx_status ON notes(status)');
         await db.execute('CREATE INDEX idx_created_at ON notes(created_at)');
+        await db.execute('CREATE INDEX idx_label_name ON labels(name)');
+      },
+      onUpgrade: (Database db, int oldVersion, int newVersion) async {
+        if (oldVersion < 2) {
+          // Add labels table if upgrading from version 1
+          await db.execute('''
+            CREATE TABLE labels(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name TEXT NOT NULL UNIQUE,
+              color TEXT
+            )
+          ''');
+          await db.execute('CREATE INDEX idx_label_name ON labels(name)');
+        }
       },
     );
   }
 
+  // Note management methods
   Future<int> insertNote(Note note) async {
     final Database db = await database;
     return await db.insert(
@@ -88,6 +114,20 @@ class DatabaseHandler {
       'notes',
       where: 'status = ?',
       whereArgs: [status.index],
+      orderBy: 'created_at DESC',
+    );
+
+    return List.generate(maps.length, (i) {
+      return Note.fromMap(maps[i]);
+    });
+  }
+
+  Future<List<Note>> getNotesByLabel(String label) async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'notes',
+      where: 'label = ?',
+      whereArgs: [label],
       orderBy: 'created_at DESC',
     );
 
@@ -154,8 +194,100 @@ class DatabaseHandler {
     );
   }
 
+  // Label management methods
+  Future<int> insertLabel(Label label) async {
+    final Database db = await database;
+    return await db.insert(
+      'labels',
+      label.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<Label>> getLabels() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'labels',
+      orderBy: 'name ASC',
+    );
+    return List.generate(maps.length, (i) => Label.fromMap(maps[i]));
+  }
+
+  Future<Label?> getLabelById(int id) async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'labels',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+
+    if (maps.isNotEmpty) {
+      return Label.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  Future<Label?> getLabelByName(String name) async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'labels',
+      where: 'name = ?',
+      whereArgs: [name],
+      limit: 1,
+    );
+
+    if (maps.isNotEmpty) {
+      return Label.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  Future<int> updateLabel(Label label) async {
+    final Database db = await database;
+    return await db.update(
+      'labels',
+      label.toMap(),
+      where: 'id = ?',
+      whereArgs: [label.id],
+    );
+  }
+
+  Future<int> deleteLabel(int id) async {
+    final Database db = await database;
+    // First, remove the label from any notes using it
+    await db.update(
+      'notes',
+      {'label': null},
+      where: 'label IN (SELECT name FROM labels WHERE id = ?)',
+      whereArgs: [id],
+    );
+    // Then delete the label
+    return await db.delete(
+      'labels',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // Label statistics
+  Future<Map<String, int>> getLabelStatistics() async {
+    final Database db = await database;
+    final Map<String, int> statistics = {};
+
+    final List<Label> labels = await getLabels();
+    for (var label in labels) {
+      final count = Sqflite.firstIntValue(await db.rawQuery(
+        'SELECT COUNT(*) FROM notes WHERE label = ?',
+        [label.name],
+      )) ?? 0;
+      statistics[label.name] = count;
+    }
+
+    return statistics;
+  }
+
   Future<void> cleanupUnusedImages() async {
-    // Get all image paths from database
     final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       'notes',
@@ -168,12 +300,10 @@ class DatabaseHandler {
         .where((path) => path != null)
         .toSet() as Set<String>;
 
-    // Get list of all image files in app directory
     final appDir = await getApplicationDocumentsDirectory();
     final imageDir = Directory(join(appDir.path, 'images'));
     if (!await imageDir.exists()) return;
 
-    // Delete unused image files
     await for (final file in imageDir.list()) {
       if (!usedImages.contains(file.path)) {
         await file.delete();
@@ -186,30 +316,43 @@ class DatabaseHandler {
     await db.execute('VACUUM');
   }
 
-  // Database maintenance methods
   Future<void> performMaintenance() async {
     await cleanupUnusedImages();
     await vacuum();
   }
 
   // Backup and restore methods
-  Future<String> exportDatabase() async {
+  Future<Map<String, dynamic>> exportDatabase() async {
     final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('notes');
-    return maps.toString();
+    final List<Map<String, dynamic>> noteMaps = await db.query('notes');
+    final List<Map<String, dynamic>> labelMaps = await db.query('labels');
+
+    return {
+      'notes': noteMaps,
+      'labels': labelMaps,
+      'version': 2, // Include database version in export
+      'timestamp': DateTime.now().toIso8601String(),
+    };
   }
 
-  Future<void> importDatabase(String data) async {
+  Future<void> importDatabase(Map<String, dynamic> data) async {
     final Database db = await database;
     await db.transaction((txn) async {
       // Clear existing data
       await txn.delete('notes');
+      await txn.delete('labels');
 
-      // Parse and insert new data
-      // Note: You'll need to implement proper parsing of your backup format
-      // This is just a placeholder implementation
-      final List<Map<String, dynamic>> maps = []; // Parse your data here
-      for (var map in maps) {
+      // Import labels first
+      final List<Map<String, dynamic>> labelMaps =
+      List<Map<String, dynamic>>.from(data['labels'] ?? []);
+      for (var map in labelMaps) {
+        await txn.insert('labels', map);
+      }
+
+      // Then import notes
+      final List<Map<String, dynamic>> noteMaps =
+      List<Map<String, dynamic>>.from(data['notes'] ?? []);
+      for (var map in noteMaps) {
         await txn.insert('notes', map);
       }
     });
