@@ -51,18 +51,8 @@ class _SplashScreenState extends State<SplashScreen>
     final logoSize = screenWidth * 0.35; // 35% of screen width
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.secondary,
-            ],
-          ),
-        ),
-        child: Center(
+      backgroundColor: Colors.blue,
+      body: Center(
           child: FadeTransition(
             opacity: _animation,
             child: Column(
@@ -78,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen>
                 Text(
                   'MySimpleNote',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Pacifico',
                     fontSize: 36,
@@ -89,7 +79,6 @@ class _SplashScreenState extends State<SplashScreen>
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
