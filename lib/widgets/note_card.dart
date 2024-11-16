@@ -71,34 +71,37 @@ class NoteCard extends StatelessWidget {
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (note.categories.isNotEmpty) ...[
+                  if (note.label != null && note.label!.isNotEmpty) ...[
                     const SizedBox(height: AppConstants.smallPadding),
-                    Wrap(
-                      spacing: AppConstants.smallPadding,
-                      children: note.categories.map((category) {
-                        return Chip(
-                          label: Text(
-                            category,
-                            style: const TextStyle(
-                              fontSize: AppConstants.smallFontSize,
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                    Chip(
+                      label: Text(
+                        note.label!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                      avatar: Icon(
+                        Icons.label,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                     ),
                   ],
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.defaultPadding,
+              padding: const EdgeInsets.only(
+                left: AppConstants.defaultPadding,
+                right: AppConstants.defaultPadding,
+                bottom: AppConstants.smallPadding,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _formatDate(note.modifiedAt),
+                    'Last modified: ${_formatDate(note.modifiedAt)}',
                     style: TextStyle(
                       fontSize: AppConstants.smallFontSize,
                       color: Theme.of(context).colorScheme.secondary,
@@ -110,11 +113,13 @@ class NoteCard extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.archive),
                           onPressed: onArchive,
+                          tooltip: 'Archive note',
                         ),
                       if (onDelete != null)
                         IconButton(
                           icon: const Icon(Icons.delete),
-                          onPressed: () => _showDeleteDialog(context),
+                          onPressed: onDelete,
+                          tooltip: 'Delete note',
                         ),
                     ],
                   ),
@@ -129,33 +134,5 @@ class NoteCard extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
-  }
-
-  Future<void> _showDeleteDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Note'),
-          content: const Text('Are you sure you want to delete this note?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                onDelete?.call();
-              },
-              child: const Text(
-                'Delete',
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
