@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
+import 'package:vgsmw_msn/screens/home_screen.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: const ProfilePage(),
+      home: const HomeScreen(),
     );
   }
 }
