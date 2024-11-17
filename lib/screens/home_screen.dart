@@ -15,7 +15,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _showArchived = false;
-  String? _selectedLabel;
 
   @override
   Widget build(BuildContext context) {
