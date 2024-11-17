@@ -5,10 +5,8 @@ import '../providers/note_provider.dart';
 import '../providers/loading_provider.dart';
 import '../providers/label_provider.dart';
 import '../models/note.dart';
-import '../models/label.dart';
 import '../widgets/loading_overlay.dart';
 import '../utils/image_helper.dart';
-import '../utils/constants.dart';
 
 class NoteEditorScreen extends StatefulWidget {
   final Note? note;
