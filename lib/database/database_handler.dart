@@ -242,7 +242,7 @@ class DatabaseHandler {
 
   // Imports database content from backup (not implemented, for the future)
   // Replaces all existing data
-  /*Future<void> importDatabase(Map<String, dynamic> data) async {
+  Future<void> importDatabase(Map<String, dynamic> data) async {
     final Database db = await database;
     await db.transaction((txn) async {
       await txn.delete('notes');
