@@ -69,8 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
-                      fontFamily: 'Pacifico', // Added Pacifico font
-                      letterSpacing: 1.2, // Optional: for consistent spacing
+                      fontFamily: 'Pacifico',
+                      letterSpacing: 1.2,
                     ),
                   ),
                 ],
@@ -174,28 +174,41 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
                 onDelete: () async {
-                  // Show confirmation dialog
                   final bool? confirm = await showDialog<bool>(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Delete Note'),
-                        content: const Text('Are you sure you want to delete this note? This action cannot be undone.'),
+                        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+                        titlePadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                        insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
+                        title: const Text(
+                          'Delete Note',
+                          textAlign: TextAlign.center,
+                        ),
+                        content: const Text(
+                          'Are you sure you want to delete this note?\nThis action cannot be undone.',
+                          textAlign: TextAlign.center,
+                        ),
                         actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(false); // Don't delete
-                            },
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(true); // Confirm delete
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.red, // Make the delete button red
-                            ),
-                            child: const Text('Delete'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.red,
+                                ),
+                                child: const Text('Delete'),
+                              ),
+                            ],
                           ),
                         ],
                       );
@@ -229,7 +242,10 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
           backgroundColor: Colors.yellow[700],
-        child: const Icon(Icons.add),
+        child: const Icon(
+            Icons.add,
+            color: Colors.black,
+        ),
       ) : null,
     );
   }
