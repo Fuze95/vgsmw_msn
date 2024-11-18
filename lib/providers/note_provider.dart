@@ -8,8 +8,6 @@ class NoteProvider with ChangeNotifier {
   List<Note> get notes => _notes.where((note) => note.status == NoteStatus.active).toList();
   List<Note> get archivedNotes => _notes.where((note) => note.status == NoteStatus.archived).toList();
 
-  Set<String> get allCategories =>
-      _notes.expand((note) => note.categories).toSet();
 
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
@@ -49,18 +47,6 @@ class NoteProvider with ChangeNotifier {
     note.status = note.status == NoteStatus.active
         ? NoteStatus.archived
         : NoteStatus.active;
-    await updateNote(note);
-  }
-
-  Future<void> addCategory(Note note, String category) async {
-    if (!note.categories.contains(category)) {
-      note.categories.add(category);
-      await updateNote(note);
-    }
-  }
-
-  Future<void> removeCategory(Note note, String category) async {
-    note.categories.remove(category);
     await updateNote(note);
   }
 

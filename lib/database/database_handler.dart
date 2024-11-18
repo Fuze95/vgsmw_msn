@@ -37,7 +37,6 @@ class DatabaseHandler {
             created_at TEXT NOT NULL,
             modified_at TEXT NOT NULL,
             label TEXT,
-            categories TEXT,
             image_path TEXT,
             status INTEGER DEFAULT 0
           )

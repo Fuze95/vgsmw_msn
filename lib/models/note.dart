@@ -10,7 +10,6 @@ class Note {
   DateTime createdAt;
   DateTime modifiedAt;
   String? label;
-  List<String> categories;
   String? imagePath;
   NoteStatus status;
 
@@ -21,7 +20,6 @@ class Note {
     required this.createdAt,
     required this.modifiedAt,
     this.label,
-    this.categories = const [],
     this.imagePath,
     this.status = NoteStatus.active,
   });
@@ -34,7 +32,6 @@ class Note {
       'created_at': createdAt.toIso8601String(),
       'modified_at': modifiedAt.toIso8601String(),
       'label': label,
-      'categories': categories.join(','),
       'image_path': imagePath,
       'status': status.index,
     };
@@ -48,7 +45,6 @@ class Note {
       createdAt: DateTime.parse(map['created_at']),
       modifiedAt: DateTime.parse(map['modified_at']),
       label: map['label'],
-      categories: map['categories']?.split(',') ?? [],
       imagePath: map['image_path'],
       status: NoteStatus.values[map['status'] ?? 0],
     );

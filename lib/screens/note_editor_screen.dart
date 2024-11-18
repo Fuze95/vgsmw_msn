@@ -31,7 +31,6 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     _contentController = TextEditingController(text: widget.note?.content ?? '');
     _imagePath = widget.note?.imagePath;
     _selectedLabel = widget.note?.label;
-    _categories = widget.note?.categories ?? [];
   }
 
   @override
@@ -152,7 +151,6 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
         createdAt: widget.note?.createdAt ?? DateTime.now(),
         modifiedAt: DateTime.now(),
         label: _selectedLabel,
-        categories: _categories,
         imagePath: _imagePath,
         status: widget.note?.status ?? NoteStatus.active,
       );
