@@ -84,11 +84,8 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
                   const Divider(),
                   ...labelProvider.labels.map((label) {
                     return ListTile(
-                      leading: Icon(
+                      leading: const Icon(
                         Icons.label,
-                        color: label.color != null
-                            ? Color(int.parse(label.color!))
-                            : Theme.of(context).colorScheme.primary,
                       ),
                       title: Text(
                         label.name,

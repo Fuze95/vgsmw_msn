@@ -19,10 +19,6 @@ class LabelManagementScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final label = labelProvider.labels[index];
               return ListTile(
-                leading: Icon(Icons.label,
-                    color: label.color != null
-                        ? Color(int.parse(label.color!))
-                        : null),
                 title: Text(label.name),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
@@ -107,7 +103,6 @@ class LabelManagementScreen extends StatelessWidget {
                   Label(
                     id: label.id,
                     name: nameController.text,
-                    color: label.color,
                   ),
                 );
               }
