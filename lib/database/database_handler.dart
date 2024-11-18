@@ -31,7 +31,7 @@ class DatabaseHandler {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 2, // Database schema version for handling upgrades
       onCreate: (Database db, int version) async {
         // Create notes table with columns for title, content, timestamps, etc.
         await db.execute('''
@@ -226,8 +226,8 @@ class DatabaseHandler {
     await db.execute('VACUUM');
   }
 
-  // Exports database content for backup
-  Future<Map<String, dynamic>> exportDatabase() async {
+  // Exports database content for backup (not implemented, for the future)
+  /*Future<Map<String, dynamic>> exportDatabase() async {
     final Database db = await database;
     final List<Map<String, dynamic>> noteMaps = await db.query('notes');
     final List<Map<String, dynamic>> labelMaps = await db.query('labels');
@@ -260,5 +260,5 @@ class DatabaseHandler {
         await txn.insert('notes', map);
       }
     });
-  }
+  }*/
 }
