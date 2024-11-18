@@ -31,6 +31,7 @@ class DatabaseHandler {
 
     return await openDatabase(
       path,
+      version: 2,
       onCreate: (Database db, int version) async {
         // Create notes table with columns for title, content, timestamps, etc.
         await db.execute('''
@@ -58,6 +59,18 @@ class DatabaseHandler {
         await db.execute('CREATE INDEX idx_status ON notes(status)');
         await db.execute('CREATE INDEX idx_created_at ON notes(created_at)');
         await db.execute('CREATE INDEX idx_label_name ON labels(name)');
+      },
+      onUpgrade: (Database db, int oldVersion, int newVersion) async {
+        if (oldVersion < 2) {
+          // Migration: Add labels table for version 2
+          await db.execute('''
+            CREATE TABLE labels(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name TEXT NOT NULL UNIQUE,
+            )
+          ''');
+          await db.execute('CREATE INDEX idx_label_name ON labels(name)');
+        }
       },
     );
   }
@@ -213,8 +226,8 @@ class DatabaseHandler {
     await db.execute('VACUUM');
   }
 
-  // Exports database content for backup (not implemented, for the future)
-  /*Future<Map<String, dynamic>> exportDatabase() async {
+  // Exports database content for backup
+  Future<Map<String, dynamic>> exportDatabase() async {
     final Database db = await database;
     final List<Map<String, dynamic>> noteMaps = await db.query('notes');
     final List<Map<String, dynamic>> labelMaps = await db.query('labels');
@@ -247,5 +260,5 @@ class DatabaseHandler {
         await txn.insert('notes', map);
       }
     });
-  }*/
+  }
 }
