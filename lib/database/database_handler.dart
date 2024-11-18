@@ -51,7 +51,7 @@ class DatabaseHandler {
         await db.execute('''
           CREATE TABLE labels(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE,
+            name TEXT NOT NULL UNIQUE
           )
         ''');
 
@@ -66,7 +66,7 @@ class DatabaseHandler {
           await db.execute('''
             CREATE TABLE labels(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              name TEXT NOT NULL UNIQUE,
+              name TEXT NOT NULL UNIQUE
             )
           ''');
           await db.execute('CREATE INDEX idx_label_name ON labels(name)');
