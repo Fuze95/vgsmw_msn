@@ -48,7 +48,6 @@ class DatabaseHandler {
           CREATE TABLE labels(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
-            color TEXT
           )
         ''');
 
@@ -64,7 +63,6 @@ class DatabaseHandler {
             CREATE TABLE labels(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT NOT NULL UNIQUE,
-              color TEXT
             )
           ''');
           await db.execute('CREATE INDEX idx_label_name ON labels(name)');
