@@ -22,7 +22,6 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
   late TextEditingController _contentController;
   String? _imagePath;
   String? _selectedLabel;
-  List<String> _categories = [];
 
   @override
   void initState() {

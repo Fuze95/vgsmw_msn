@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/note.dart';
@@ -195,8 +193,8 @@ class DatabaseHandler {
 
   // Maintenance Operations
 
-  // Cleans up unused image files from storage
-  Future<void> cleanupUnusedImages() async {
+  // Cleans up unused image files from storage (not implemented, for the future)
+  /*Future<void> cleanupUnusedImages() async {
     final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       'notes',
@@ -218,7 +216,7 @@ class DatabaseHandler {
         await file.delete();
       }
     }
-  }
+  }*/
 
   // Performs database optimization
   Future<void> vacuum() async {
